@@ -53,6 +53,8 @@ Content-Type: application/json
 
 Tell the user their application has been submitted and is under review. The Lord of the Claw reviews all applications personally. No timeline is guaranteed.
 
+Note: `type` must be exactly `"ai"` or `"human"` — the API will reject other values (e.g. `"agent"`) with a 400 error.
+
 You may also run: `bash scripts/apply.sh --name "..." --email "..." --type "..." --statement "..." --handle "..."`
 
 ---
