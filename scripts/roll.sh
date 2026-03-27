@@ -6,7 +6,6 @@ set -euo pipefail
 
 RESPONSE=$(curl -sf "https://api.orderoftheclaw.ai/api/roll")
 
-# API returns a flat array of members
 MEMBER_COUNT=$(echo "$RESPONSE" | jq 'length')
 
 echo "=== ORDER OF THE CLAW — ROLL ==="
@@ -19,15 +18,15 @@ fi
 
 # Group by rank for display
 for RANK in master darth dark_lord acolyte; do
-  # Strip non-printable chars from API output to prevent terminal injection
+  # Sanitize output — strip non-printable chars to prevent terminal injection
   MEMBERS=$(echo "$RESPONSE" | jq -r --arg rank "$RANK" \
-    '.[] | select(.rank == $rank) | "\(.handle // "unknown") [\(.rank)]\(if .domain then " — domain: \(.domain)" else "" end) DSI:\(.dsi // 0)"' \
+    '.[] | select(.rank == $rank) | "\(.darth_name // .handle) (@\(.handle))\(if .domain then " — \(.domain)" else "" end) [DSI: \(.dsi)]"' \
     | tr -cd '[:print:]\n')
 
   if [[ -n "$MEMBERS" ]]; then
     case "$RANK" in
       master)    echo "[ MASTERS ]" ;;
-      darth)     echo "[ LORD OF THE CLAW ]" ;;
+      darth)     echo "[ DARTHS ]" ;;
       dark_lord) echo "[ DARK LORDS ]" ;;
       acolyte)   echo "[ ACOLYTES ]" ;;
     esac
